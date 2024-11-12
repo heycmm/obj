@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration debug="true">
+    <!-- 配置自定义转换器 -->
+    <conversionRule conversionWord="visitorInfo" converterClass="cc.orcl.obj.config.VisitorInfoConverter" />
+
+    <!-- ConsoleAppender：把日志输出到控制台 -->
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss} %highlight(%-5level) --- [%15.15(%thread)] %cyan(%-40.40(%logger{40})) : %visitorInfo : %msg%n</pattern>
+            <charset>UTF-8</charset>
+        </encoder>
+    </appender>
+
+    <!-- info 日志 -->
+    <appender name="info_log" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <File>logs/app_info.log</File>
+        <append>true</append>
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>ERROR</level>
+            <onMatch>DENY</onMatch>
+            <onMismatch>ACCEPT</onMismatch>
+        </filter>
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <fileNamePattern>logs/app_info.%d.%i.gz</fileNamePattern>
+            <maxHistory>30</maxHistory>
+            <totalSizeCap>50MB</totalSizeCap>
+            <maxFileSize>5000KB</maxFileSize>
+        </rollingPolicy>
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss} %-5level --- [%15.15(%thread)] %-40.40(%logger{40}) : %visitorInfo : %msg%n</pattern>
+            <charset>UTF-8</charset>
+        </encoder>
+    </appender>
+
+    <!-- error 日志 -->
+    <appender name="error_log" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <File>logs/app_error.log</File>
+        <append>true</append>
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>ERROR</level>
+        </filter>
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <fileNamePattern>logs/app_error.%d.%i.gz</fileNamePattern>
+            <maxHistory>30</maxHistory>
+            <totalSizeCap>50MB</totalSizeCap>
+            <maxFileSize>500KB</maxFileSize>
+        </rollingPolicy>
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss} %-5level --- [%15.15(%thread)] %-40.40(%logger{40}) : %visitorInfo : %msg%n</pattern>
+            <charset>UTF-8</charset>
+        </encoder>
+    </appender>
+
+    <root level="INFO">
+        <appender-ref ref="STDOUT" />
+        <appender-ref ref="info_log" />
+        <appender-ref ref="error_log" />
+    </root>
+
+    <logger name="org.springframework.web" level="INFO">
+        <appender-ref ref="info_log" />
+        <appender-ref ref="error_log" />
+    </logger>
+
+    <logger name="com.harvey.demo.controller" level="DEBUG" additivity="false">
+        <appender-ref ref="info_log" />
+        <appender-ref ref="error_log" />
+    </logger>
+
+    <logger name="com.atomikos" level="INFO" additivity="false">
+        <appender-ref ref="info_log" />
+        <appender-ref ref="error_log" />
+    </logger>
+</configuration>
